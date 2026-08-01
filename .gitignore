@@ -1,7 +1,14 @@
+# Dependencies
 node_modules
 
-dist
-
+# Environment
 .env
 
-generated
+# Build
+dist
+
+# AI Skill Files
+.agents/
+.claude/
+.windsurf/
+skills-lock.json

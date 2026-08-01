@@ -1,0 +1,53 @@
+model Property {
+  id String @id @default(uuid())
+
+  title String
+
+  slug String @unique
+
+  description String
+
+  rent Float
+
+  bedrooms Int
+
+  bathrooms Int
+
+  address String
+
+  city String
+
+  district String
+
+  images String[]
+
+  amenities String[]
+
+  status PropertyStatus @default(AVAILABLE)
+
+  landlordId String
+
+  landlord User @relation(fields: [landlordId], references: [id])
+
+  categoryId String
+
+  category Category @relation(fields: [categoryId], references: [id])
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+
+  isDeleted Boolean @default(false)
+
+  averageRating Float @default(0)
+
+  rentalRequests RentalRequest[]
+
+  reviews Review[]
+
+  @@index([city])
+  @@index([district])
+  @@index([rent])
+  @@index([categoryId])
+  @@index([landlordId])
+}
