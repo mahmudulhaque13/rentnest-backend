@@ -1,6 +1,7 @@
 import express, { Application, Request, Response } from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import { authRoutes } from "./modules/auth/auth.route";
 
 const app: Application = express();
 
@@ -18,5 +19,7 @@ app.get("/", (req: Request, res: Response) => {
     message: "RentNest API Running Successfully",
   });
 });
+
+app.use("/api/auth", authRoutes);
 
 export default app;
