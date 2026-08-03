@@ -19,11 +19,19 @@ const registerUser = catchAsync(async (req: Request, res: Response) => {
 const loginUser = catchAsync(async (req: Request, res: Response) => {
   const result = await authService.loginUser(req.body);
 
+  // Refresh Token Cookie
+  res.cookie("refreshToken", result.refreshToken, {
+    httpOnly: true,
+    secure: false,
+  });
+
   sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,
     message: "User logged in successfully",
-    data: result,
+    data: {
+      accessToken: result.accessToken,
+    },
   });
 });
 
@@ -36,8 +44,34 @@ const getMe = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const refreshToken = catchAsync(async (req: Request, res: Response) => {
+  const token = req.cookies.refreshToken;
+
+  const result = await authService.refreshToken(token);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "Access token generated successfully",
+    data: result,
+  });
+});
+
+const logout = catchAsync(async (req: Request, res: Response) => {
+  res.clearCookie("refreshToken");
+
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "User logged out successfully",
+    data: null,
+  });
+});
+
 export const authController = {
   registerUser,
   loginUser,
   getMe,
+  refreshToken,
+  logout,
 };
