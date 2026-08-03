@@ -8,11 +8,19 @@ import notFound from "./middlewares/notFound";
 import { propertyRoutes } from "./modules/property/property.route";
 import { categoryRoutes } from "./modules/category/category.route";
 import { rentalRequestRoutes } from "./modules/rental-request/rentalRequest.route";
+import { paymentRoutes } from "./modules/payment/payment.route";
+import { paymentController } from "./modules/payment/payment.controller";
 
 const app: Application = express();
 
 // Middlewares
 app.use(cors());
+
+app.post(
+  "/api/payments/webhook",
+  express.raw({ type: "application/json" }),
+  paymentController.stripeWebhook,
+);
 
 app.use(express.json());
 
@@ -33,6 +41,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/properties", propertyRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/rental-requests", rentalRequestRoutes);
+app.use("/api/payments", paymentRoutes);
 
 // 404 Route Handler
 app.use(notFound);
