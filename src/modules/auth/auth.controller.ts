@@ -27,7 +27,17 @@ const loginUser = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const getMe = catchAsync(async (req: Request, res: Response) => {
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "User profile retrieved successfully",
+    data: req.user,
+  });
+});
+
 export const authController = {
   registerUser,
   loginUser,
+  getMe,
 };
