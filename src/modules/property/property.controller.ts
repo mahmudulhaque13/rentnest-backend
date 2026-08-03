@@ -4,6 +4,11 @@ import httpStatus from "http-status";
 import catchAsync from "../../utils/catchAsync";
 import sendResponse from "../../utils/sendResponse";
 import { propertyService } from "./property.service";
+import AppError from "../../utils/appError";
+
+type PropertyParams = {
+  id: string;
+};
 
 const createProperty = catchAsync(async (req: Request, res: Response) => {
   const result = await propertyService.createProperty(req.body, req.user!.id);
@@ -40,8 +45,24 @@ const getSingleProperty = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const updateProperty = catchAsync(async (req: Request, res: Response) => {
+  const result = await propertyService.updateProperty(
+    req.params.id as string,
+    req.body,
+    req.user!.id,
+  );
+
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "Property updated successfully",
+    data: result,
+  });
+});
+
 export const propertyController = {
   createProperty,
   getAllProperties,
   getSingleProperty,
+  updateProperty,
 };

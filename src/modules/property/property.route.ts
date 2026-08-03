@@ -12,4 +12,6 @@ router.get("/", propertyController.getAllProperties);
 
 router.get("/:id", propertyController.getSingleProperty);
 
+router.patch("/:id", auth(Role.LANDLORD), propertyController.updateProperty);
+
 export const propertyRoutes = router;
