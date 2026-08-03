@@ -125,8 +125,115 @@ const getLandlordRentalRequests = async (landlordId: string) => {
   return requests;
 };
 
+const approveRentalRequest = async (requestId: string, landlordId: string) => {
+  const request = await prisma.rentalRequest.findUnique({
+    where: {
+      id: requestId,
+    },
+    include: {
+      property: true,
+    },
+  });
+
+  if (!request) {
+    throw new AppError(httpStatus.NOT_FOUND, "Rental request not found");
+  }
+
+  if (request.property.landlordId !== landlordId) {
+    throw new AppError(httpStatus.FORBIDDEN, "You are not authorized");
+  }
+
+  if (request.status === "APPROVED") {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      "Rental request already approved",
+    );
+  }
+
+  if (request.status === "REJECTED") {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      "Rental request already rejected",
+    );
+  }
+
+  if (request.property.status !== "AVAILABLE") {
+    throw new AppError(httpStatus.BAD_REQUEST, "Property is not available");
+  }
+
+  const result = await prisma.$transaction(async (tx) => {
+    const updatedRequest = await tx.rentalRequest.update({
+      where: {
+        id: requestId,
+      },
+      data: {
+        status: "APPROVED",
+      },
+    });
+
+    await tx.property.update({
+      where: {
+        id: request.propertyId,
+      },
+      data: {
+        status: "RENTED",
+      },
+    });
+
+    return updatedRequest;
+  });
+
+  return result;
+};
+
+const rejectRentalRequest = async (requestId: string, landlordId: string) => {
+  const request = await prisma.rentalRequest.findUnique({
+    where: {
+      id: requestId,
+    },
+    include: {
+      property: true,
+    },
+  });
+
+  if (!request) {
+    throw new AppError(httpStatus.NOT_FOUND, "Rental request not found");
+  }
+
+  if (request.property.landlordId !== landlordId) {
+    throw new AppError(httpStatus.FORBIDDEN, "You are not authorized");
+  }
+
+  if (request.status === "APPROVED") {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      "Approved request cannot be rejected",
+    );
+  }
+
+  if (request.status === "REJECTED") {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      "Rental request already rejected",
+    );
+  }
+
+  const rejectedRequest = await prisma.rentalRequest.update({
+    where: {
+      id: requestId,
+    },
+    data: {
+      status: "REJECTED",
+    },
+  });
+
+  return rejectedRequest;
+};
+
 export const rentalRequestService = {
   createRentalRequest,
   getMyRentalRequests,
   getLandlordRentalRequests,
+  approveRentalRequest,
+  rejectRentalRequest,
 };

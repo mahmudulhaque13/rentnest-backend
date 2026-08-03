@@ -24,4 +24,22 @@ router.get(
   rentalRequestController.getLandlordRentalRequests,
 );
 
+router.patch(
+  "/:id/approve",
+  auth(Role.LANDLORD),
+  rentalRequestController.approveRentalRequest,
+);
+
+router.patch(
+  "/:id/approve",
+  auth(Role.LANDLORD),
+  rentalRequestController.approveRentalRequest,
+);
+
+router.patch(
+  "/:id/reject",
+  auth(Role.LANDLORD),
+  rentalRequestController.rejectRentalRequest,
+);
+
 export const rentalRequestRoutes = router;

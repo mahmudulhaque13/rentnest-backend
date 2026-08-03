@@ -45,8 +45,38 @@ const getLandlordRentalRequests = catchAsync(
   },
 );
 
+const approveRentalRequest = catchAsync(async (req: Request, res: Response) => {
+  const result = await rentalRequestService.approveRentalRequest(
+    req.params.id as string,
+    req.user!.id,
+  );
+
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "Rental request approved successfully",
+    data: result,
+  });
+});
+
+const rejectRentalRequest = catchAsync(async (req: Request, res: Response) => {
+  const result = await rentalRequestService.rejectRentalRequest(
+    req.params.id as string,
+    req.user!.id,
+  );
+
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "Rental request rejected successfully",
+    data: result,
+  });
+});
+
 export const rentalRequestController = {
   createRentalRequest,
   getMyRentalRequests,
   getLandlordRentalRequests,
+  approveRentalRequest,
+  rejectRentalRequest,
 };
