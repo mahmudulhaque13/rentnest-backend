@@ -7,6 +7,7 @@ import globalErrorHandler from "./middlewares/globalErrorHandler";
 import notFound from "./middlewares/notFound";
 import { propertyRoutes } from "./modules/property/property.route";
 import { categoryRoutes } from "./modules/category/category.route";
+import { rentalRequestRoutes } from "./modules/rental-request/rentalRequest.route";
 
 const app: Application = express();
 
@@ -31,6 +32,7 @@ app.get("/", (req: Request, res: Response) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/properties", propertyRoutes);
 app.use("/api/categories", categoryRoutes);
+app.use("/api/rental-requests", rentalRequestRoutes);
 
 // 404 Route Handler
 app.use(notFound);
