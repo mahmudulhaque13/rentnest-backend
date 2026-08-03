@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 import { authRoutes } from "./modules/auth/auth.route";
 import globalErrorHandler from "./middlewares/globalErrorHandler";
 import notFound from "./middlewares/notFound";
+import { propertyRoutes } from "./modules/property/property.route";
 
 const app: Application = express();
 
@@ -27,6 +28,7 @@ app.get("/", (req: Request, res: Response) => {
 
 // Routes
 app.use("/api/auth", authRoutes);
+app.use("/api/properties", propertyRoutes);
 
 // 404 Route Handler
 app.use(notFound);
