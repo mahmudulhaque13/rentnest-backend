@@ -22,13 +22,16 @@ const createProperty = catchAsync(async (req: Request, res: Response) => {
 });
 
 const getAllProperties = catchAsync(async (req: Request, res: Response) => {
-  const result = await propertyService.getAllProperties();
+  const query = req.query;
+
+  const result = await propertyService.getAllProperties(query);
 
   sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,
     message: "Properties retrieved successfully",
-    data: result,
+    data: result.data,
+    meta: result.meta,
   });
 });
 
