@@ -1,4 +1,6 @@
 import prisma from "../../lib/prisma";
+import AppError from "../../utils/appError";
+import httpStatus from "http-status";
 
 const createProperty = async (payload: any, landlordId: string) => {
   const property = await prisma.property.create({
@@ -35,7 +37,35 @@ const getAllProperties = async () => {
   return properties;
 };
 
+const getSingleProperty = async (id: string) => {
+  const property = await prisma.property.findFirst({
+    where: {
+      id,
+      isDeleted: false,
+    },
+    include: {
+      landlord: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          phone: true,
+        },
+      },
+      category: true,
+      reviews: true,
+    },
+  });
+
+  if (!property) {
+    throw new AppError(httpStatus.NOT_FOUND, "Property not found");
+  }
+
+  return property;
+};
+
 export const propertyService = {
   createProperty,
   getAllProperties,
+  getSingleProperty,
 };
