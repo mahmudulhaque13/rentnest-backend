@@ -230,10 +230,49 @@ const rejectRentalRequest = async (requestId: string, landlordId: string) => {
   return rejectedRequest;
 };
 
+const cancelRentalRequest = async (requestId: string, tenantId: string) => {
+  const request = await prisma.rentalRequest.findUnique({
+    where: {
+      id: requestId,
+    },
+  });
+
+  if (!request) {
+    throw new AppError(httpStatus.NOT_FOUND, "Rental request not found");
+  }
+
+  if (request.tenantId !== tenantId) {
+    throw new AppError(httpStatus.FORBIDDEN, "You are not authorized");
+  }
+
+  if (request.status === "APPROVED") {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      "Approved request cannot be cancelled",
+    );
+  }
+
+  if (request.status === "REJECTED") {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      "Rejected request cannot be cancelled",
+    );
+  }
+
+  const deletedRequest = await prisma.rentalRequest.delete({
+    where: {
+      id: requestId,
+    },
+  });
+
+  return deletedRequest;
+};
+
 export const rentalRequestService = {
   createRentalRequest,
   getMyRentalRequests,
   getLandlordRentalRequests,
   approveRentalRequest,
   rejectRentalRequest,
+  cancelRentalRequest,
 };

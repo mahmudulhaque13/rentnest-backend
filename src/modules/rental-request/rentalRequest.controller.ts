@@ -73,10 +73,25 @@ const rejectRentalRequest = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const cancelRentalRequest = catchAsync(async (req: Request, res: Response) => {
+  const result = await rentalRequestService.cancelRentalRequest(
+    req.params.id as string,
+    req.user!.id,
+  );
+
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "Rental request cancelled successfully",
+    data: result,
+  });
+});
+
 export const rentalRequestController = {
   createRentalRequest,
   getMyRentalRequests,
   getLandlordRentalRequests,
   approveRentalRequest,
   rejectRentalRequest,
+  cancelRentalRequest,
 };

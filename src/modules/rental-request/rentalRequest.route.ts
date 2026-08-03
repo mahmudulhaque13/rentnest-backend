@@ -42,4 +42,10 @@ router.patch(
   rentalRequestController.rejectRentalRequest,
 );
 
+router.delete(
+  "/:id",
+  auth(Role.TENANT),
+  rentalRequestController.cancelRentalRequest,
+);
+
 export const rentalRequestRoutes = router;
