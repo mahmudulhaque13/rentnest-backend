@@ -6,8 +6,9 @@ import config from "../config";
 
 import { verifyToken } from "../utils/jwt";
 import AppError from "../utils/appError";
+import { Role } from "@prisma/client";
 
-const auth = () => {
+const auth = (...requiredRoles: Role[]) => {
   return (req: Request, res: Response, next: NextFunction) => {
     const token = req.headers.authorization;
 
@@ -16,6 +17,10 @@ const auth = () => {
     }
 
     const decoded = verifyToken(token, config.jwtAccessSecret) as JwtPayload;
+
+    if (requiredRoles.length > 0 && !requiredRoles.includes(decoded.role)) {
+      throw new AppError(httpStatus.FORBIDDEN, "Forbidden");
+    }
 
     req.user = decoded;
 
