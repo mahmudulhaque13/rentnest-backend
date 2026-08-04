@@ -1,13 +1,34 @@
 import httpStatus from "http-status";
+import { PaymentStatus } from "@prisma/client";
+
 import prisma from "../../lib/prisma";
 import AppError from "../../utils/appError";
 
-import { PaymentStatus } from "@prisma/client";
 import { ICreateReview, IUpdateReview } from "./review.interface";
 
+const updatePropertyAverageRating = async (propertyId: string) => {
+  const result = await prisma.review.aggregate({
+    where: {
+      propertyId,
+    },
+    _avg: {
+      rating: true,
+    },
+  });
+
+  await prisma.property.update({
+    where: {
+      id: propertyId,
+    },
+    data: {
+      averageRating: result._avg.rating ?? 0,
+    },
+  });
+};
+
 const createReview = async (tenantId: string, payload: ICreateReview) => {
-  // Property Exists?
-  const property = await prisma.property.findUnique({
+  // Check Property
+  const property = await prisma.property.findFirst({
     where: {
       id: payload.propertyId,
       isDeleted: false,
@@ -18,7 +39,7 @@ const createReview = async (tenantId: string, payload: ICreateReview) => {
     throw new AppError(httpStatus.NOT_FOUND, "Property not found");
   }
 
-  // Payment Completed?
+  // Check Payment
   const payment = await prisma.payment.findFirst({
     where: {
       status: PaymentStatus.PAID,
@@ -61,31 +82,25 @@ const createReview = async (tenantId: string, payload: ICreateReview) => {
     },
   });
 
-  // Calculate Average Rating
-  const reviews = await prisma.review.findMany({
-    where: {
-      propertyId: payload.propertyId,
-    },
-  });
-
-  const totalRating = reviews.reduce((sum, review) => sum + review.rating, 0);
-
-  const averageRating = totalRating / reviews.length;
-
-  // Update Property Rating
-  await prisma.property.update({
-    where: {
-      id: payload.propertyId,
-    },
-    data: {
-      averageRating,
-    },
-  });
+  // Update Average Rating
+  await updatePropertyAverageRating(payload.propertyId);
 
   return review;
 };
 
 const getPropertyReviews = async (propertyId: string) => {
+  // Check Property
+  const property = await prisma.property.findFirst({
+    where: {
+      id: propertyId,
+      isDeleted: false,
+    },
+  });
+
+  if (!property) {
+    throw new AppError(httpStatus.NOT_FOUND, "Property not found");
+  }
+
   const reviews = await prisma.review.findMany({
     where: {
       propertyId,
@@ -133,22 +148,8 @@ const updateReview = async (
     data: payload,
   });
 
-  const reviews = await prisma.review.findMany({
-    where: {
-      propertyId: review.propertyId,
-    },
-  });
-
-  const totalRating = reviews.reduce((sum, item) => sum + item.rating, 0);
-
-  await prisma.property.update({
-    where: {
-      id: review.propertyId,
-    },
-    data: {
-      averageRating: totalRating / reviews.length,
-    },
-  });
+  // Update Average Rating
+  await updatePropertyAverageRating(review.propertyId);
 
   return updatedReview;
 };
@@ -174,25 +175,8 @@ const deleteReview = async (tenantId: string, reviewId: string) => {
     },
   });
 
-  const reviews = await prisma.review.findMany({
-    where: {
-      propertyId: review.propertyId,
-    },
-  });
-
-  const averageRating =
-    reviews.length === 0
-      ? 0
-      : reviews.reduce((sum, item) => sum + item.rating, 0) / reviews.length;
-
-  await prisma.property.update({
-    where: {
-      id: review.propertyId,
-    },
-    data: {
-      averageRating,
-    },
-  });
+  // Update Average Rating
+  await updatePropertyAverageRating(review.propertyId);
 
   return null;
 };
