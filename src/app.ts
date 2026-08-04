@@ -10,6 +10,7 @@ import { categoryRoutes } from "./modules/category/category.route";
 import { rentalRequestRoutes } from "./modules/rental-request/rentalRequest.route";
 import { paymentRoutes } from "./modules/payment/payment.route";
 import { paymentController } from "./modules/payment/payment.controller";
+import { reviewRoutes } from "./modules/review/review.route";
 
 const app: Application = express();
 
@@ -42,6 +43,7 @@ app.use("/api/properties", propertyRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/rental-requests", rentalRequestRoutes);
 app.use("/api/payments", paymentRoutes);
+app.use("/api/reviews", reviewRoutes);
 
 // 404 Route Handler
 app.use(notFound);
