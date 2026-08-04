@@ -11,6 +11,7 @@ import { rentalRequestRoutes } from "./modules/rental-request/rentalRequest.rout
 import { paymentRoutes } from "./modules/payment/payment.route";
 import { paymentController } from "./modules/payment/payment.controller";
 import { reviewRoutes } from "./modules/review/review.route";
+import { adminRoutes } from "./modules/admin/admin.route";
 
 const app: Application = express();
 
@@ -44,6 +45,7 @@ app.use("/api/categories", categoryRoutes);
 app.use("/api/rental-requests", rentalRequestRoutes);
 app.use("/api/payments", paymentRoutes);
 app.use("/api/reviews", reviewRoutes);
+app.use("/api/admin", adminRoutes);
 
 // 404 Route Handler
 app.use(notFound);
