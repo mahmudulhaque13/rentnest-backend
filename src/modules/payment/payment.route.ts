@@ -12,4 +12,12 @@ router.post(
   paymentController.createCheckoutSession,
 );
 
+router.get("/my-payments", auth(Role.TENANT), paymentController.getMyPayments);
+
+router.get(
+  "/earnings",
+  auth(Role.LANDLORD),
+  paymentController.getLandlordEarnings,
+);
+
 export const paymentRoutes = router;

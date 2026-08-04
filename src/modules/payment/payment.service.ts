@@ -179,7 +179,93 @@ const stripeWebhook = async (req: Request) => {
   };
 };
 
+const getMyPayments = async (tenantId: string) => {
+  const payments = await prisma.payment.findMany({
+    where: {
+      rentalRequest: {
+        tenantId,
+      },
+    },
+    include: {
+      rentalRequest: {
+        include: {
+          property: {
+            select: {
+              id: true,
+              title: true,
+              city: true,
+              district: true,
+              rent: true,
+              images: true,
+            },
+          },
+        },
+      },
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+
+  return payments;
+};
+
+const getLandlordEarnings = async (landlordId: string) => {
+  const payments = await prisma.payment.findMany({
+    where: {
+      status: PaymentStatus.PAID,
+
+      rentalRequest: {
+        property: {
+          landlordId,
+        },
+      },
+    },
+
+    include: {
+      rentalRequest: {
+        include: {
+          tenant: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
+
+          property: {
+            select: {
+              id: true,
+              title: true,
+              city: true,
+              district: true,
+              rent: true,
+            },
+          },
+        },
+      },
+    },
+
+    orderBy: {
+      paidAt: "desc",
+    },
+  });
+
+  const totalEarnings = payments.reduce(
+    (sum, payment) => sum + payment.amount,
+    0,
+  );
+
+  return {
+    totalEarnings,
+    totalPayments: payments.length,
+    payments,
+  };
+};
+
 export const paymentService = {
   createCheckoutSession,
   stripeWebhook,
+  getMyPayments,
+  getLandlordEarnings,
 };

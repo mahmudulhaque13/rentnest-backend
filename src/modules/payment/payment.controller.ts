@@ -30,7 +30,31 @@ const stripeWebhook = async (req: Request, res: Response) => {
   });
 };
 
+const getMyPayments = catchAsync(async (req: Request, res: Response) => {
+  const result = await paymentService.getMyPayments(req.user!.id);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "Payments retrieved successfully",
+    data: result,
+  });
+});
+
+const getLandlordEarnings = catchAsync(async (req: Request, res: Response) => {
+  const result = await paymentService.getLandlordEarnings(req.user!.id);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "Earnings retrieved successfully",
+    data: result,
+  });
+});
+
 export const paymentController = {
   createCheckoutSession,
   stripeWebhook,
+  getMyPayments,
+  getLandlordEarnings,
 };
