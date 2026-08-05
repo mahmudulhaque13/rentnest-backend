@@ -1,7 +1,7 @@
 {
   "name": "rentnest-backend",
   "version": "1.0.0",
-  "description": "",
+  "description": "RentNest Backend API built with Express, TypeScript, Prisma ORM, PostgreSQL, and Stripe.",
   "main": "index.js",
   "scripts": {
     "dev": "tsx watch src/server.ts",
@@ -9,13 +9,12 @@
     "start": "node dist/server.js"
   },
   "keywords": [],
-  "author": "",
+  "author": "Mahmudul Haque",
   "license": "ISC",
   "type": "module",
   "dependencies": {
     "@prisma/client": "^6.16.3",
     "bcrypt": "^6.0.0",
-    "bcryptjs": "^3.0.3",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
@@ -29,7 +28,6 @@
   },
   "devDependencies": {
     "@types/bcrypt": "^6.0.0",
-    "@types/bcryptjs": "^2.4.6",
     "@types/cookie-parser": "^1.4.10",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",

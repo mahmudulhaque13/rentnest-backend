@@ -27,7 +27,6 @@ const updatePropertyAverageRating = async (propertyId: string) => {
 };
 
 const createReview = async (tenantId: string, payload: ICreateReview) => {
-  // Check Property
   const property = await prisma.property.findFirst({
     where: {
       id: payload.propertyId,
@@ -39,7 +38,6 @@ const createReview = async (tenantId: string, payload: ICreateReview) => {
     throw new AppError(httpStatus.NOT_FOUND, "Property not found");
   }
 
-  // Check Payment
   const payment = await prisma.payment.findFirst({
     where: {
       status: PaymentStatus.PAID,
@@ -57,7 +55,6 @@ const createReview = async (tenantId: string, payload: ICreateReview) => {
     );
   }
 
-  // Already Reviewed?
   const existingReview = await prisma.review.findFirst({
     where: {
       tenantId,
@@ -72,7 +69,6 @@ const createReview = async (tenantId: string, payload: ICreateReview) => {
     );
   }
 
-  // Create Review
   const review = await prisma.review.create({
     data: {
       tenantId,
@@ -82,14 +78,12 @@ const createReview = async (tenantId: string, payload: ICreateReview) => {
     },
   });
 
-  // Update Average Rating
   await updatePropertyAverageRating(payload.propertyId);
 
   return review;
 };
 
 const getPropertyReviews = async (propertyId: string) => {
-  // Check Property
   const property = await prisma.property.findFirst({
     where: {
       id: propertyId,
@@ -148,7 +142,6 @@ const updateReview = async (
     data: payload,
   });
 
-  // Update Average Rating
   await updatePropertyAverageRating(review.propertyId);
 
   return updatedReview;

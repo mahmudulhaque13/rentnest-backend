@@ -52,7 +52,6 @@ const updateCategory = async (
     throw new AppError(httpStatus.NOT_FOUND, "Category not found");
   }
 
-  // Duplicate check
   if (payload.name || payload.slug) {
     const isExists = await prisma.category.findFirst({
       where: {

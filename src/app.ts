@@ -50,7 +50,7 @@ app.use("/api/admin", adminRoutes);
 // 404 Route Handler
 app.use(notFound);
 
-// Global Error Handler (সবসময় একদম শেষে থাকবে)
+// Global Error Handler (always in last)
 app.use(globalErrorHandler);
 
 export default app;

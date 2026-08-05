@@ -1,9 +1,16 @@
+import { Prisma } from "@prisma/client";
+import httpStatus from "http-status";
+
 import prisma from "../../lib/prisma";
 import AppError from "../../utils/appError";
-import httpStatus from "http-status";
 import { IPropertyQuery } from "./property.interface";
-import { Prisma } from "@prisma/client";
-import { propertySearchableFields } from "../../constants/property.constant";
+
+const propertySearchableFields = [
+  "title",
+  "city",
+  "district",
+  "address",
+] as const;
 
 const createProperty = async (payload: any, landlordId: string) => {
   const property = await prisma.property.create({
@@ -46,21 +53,15 @@ const getAllProperties = async (query: IPropertyQuery) => {
   const { city, district, categoryId, status } = query;
 
   if (city) {
-    andConditions.push({
-      city,
-    });
+    andConditions.push({ city });
   }
 
   if (district) {
-    andConditions.push({
-      district,
-    });
+    andConditions.push({ district });
   }
 
   if (categoryId) {
-    andConditions.push({
-      categoryId,
-    });
+    andConditions.push({ categoryId });
   }
 
   if (status) {

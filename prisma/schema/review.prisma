@@ -17,7 +17,6 @@ model Review {
 
   updatedAt DateTime @updatedAt
 
+  @@unique([tenantId, propertyId])
   @@index([propertyId])
-
-   @@unique([tenantId, propertyId])
 }

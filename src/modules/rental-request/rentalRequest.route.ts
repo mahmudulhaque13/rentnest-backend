@@ -31,12 +31,6 @@ router.patch(
 );
 
 router.patch(
-  "/:id/approve",
-  auth(Role.LANDLORD),
-  rentalRequestController.approveRentalRequest,
-);
-
-router.patch(
   "/:id/reject",
   auth(Role.LANDLORD),
   rentalRequestController.rejectRentalRequest,
