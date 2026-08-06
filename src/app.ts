@@ -2,16 +2,16 @@ import express, { Application, Request, Response } from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 
-import { authRoutes } from "./modules/auth/auth.route.js";
-import globalErrorHandler from "./middlewares/globalErrorHandler.js";
-import notFound from "./middlewares/notFound.js";
-import { propertyRoutes } from "./modules/property/property.route.js";
-import { categoryRoutes } from "./modules/category/category.route.js";
-import { rentalRequestRoutes } from "./modules/rental-request/rentalRequest.route.js";
-import { paymentRoutes } from "./modules/payment/payment.route.js";
-import { paymentController } from "./modules/payment/payment.controller.js";
-import { reviewRoutes } from "./modules/review/review.route.js";
-import { adminRoutes } from "./modules/admin/admin.route.js";
+import { authRoutes } from "./modules/auth/auth.route";
+import globalErrorHandler from "./middlewares/globalErrorHandler";
+import notFound from "./middlewares/notFound";
+import { propertyRoutes } from "./modules/property/property.route";
+import { categoryRoutes } from "./modules/category/category.route";
+import { rentalRequestRoutes } from "./modules/rental-request/rentalRequest.route";
+import { paymentRoutes } from "./modules/payment/payment.route";
+import { paymentController } from "./modules/payment/payment.controller";
+import { reviewRoutes } from "./modules/review/review.route";
+import { adminRoutes } from "./modules/admin/admin.route";
 
 const app: Application = express();
 

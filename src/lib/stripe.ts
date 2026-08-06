@@ -1,6 +1,6 @@
 import Stripe from "stripe";
 import config from "../config";
 
-const stripe = new Stripe(config.stripeSecretKey);
+const stripe: Stripe = new Stripe(config.stripeSecretKey);
 
 export default stripe;
