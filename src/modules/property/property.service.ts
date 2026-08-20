@@ -128,6 +128,23 @@ const getAllProperties = async (query: IPropertyQuery) => {
   };
 };
 
+const getMyProperties = async (landlordId: string) => {
+  const properties = await prisma.property.findMany({
+    where: {
+      landlordId,
+      isDeleted: false,
+    },
+    include: {
+      category: true,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+
+  return properties;
+};
+
 const getSingleProperty = async (id: string) => {
   const property = await prisma.property.findFirst({
     where: {
@@ -218,6 +235,7 @@ const deleteProperty = async (id: string, landlordId: string) => {
 export const propertyService = {
   createProperty,
   getAllProperties,
+  getMyProperties,
   getSingleProperty,
   updateProperty,
   deleteProperty,
