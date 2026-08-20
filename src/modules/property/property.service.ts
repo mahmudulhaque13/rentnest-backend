@@ -4,6 +4,7 @@ import httpStatus from "http-status";
 import prisma from "../../lib/prisma";
 import AppError from "../../utils/appError";
 import { IPropertyQuery } from "./property.interface";
+import slugify from "slugify";
 
 const propertySearchableFields = [
   "title",
@@ -13,9 +14,17 @@ const propertySearchableFields = [
 ] as const;
 
 const createProperty = async (payload: any, landlordId: string) => {
+  const baseSlug = slugify(payload.title, {
+    lower: true,
+    strict: true,
+  });
+
+  const slug = `${baseSlug}-${Date.now()}`;
+
   const property = await prisma.property.create({
     data: {
       ...payload,
+      slug,
       landlordId,
     },
   });
