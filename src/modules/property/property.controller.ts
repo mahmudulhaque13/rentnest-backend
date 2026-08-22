@@ -4,11 +4,6 @@ import httpStatus from "http-status";
 import catchAsync from "../../utils/catchAsync";
 import sendResponse from "../../utils/sendResponse";
 import { propertyService } from "./property.service";
-import AppError from "../../utils/appError";
-
-type PropertyParams = {
-  id: string;
-};
 
 const createProperty = catchAsync(async (req: Request, res: Response) => {
   const result = await propertyService.createProperty(req.body, req.user!.id);
@@ -74,6 +69,23 @@ const updateProperty = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const updatePropertyAvailability = catchAsync(
+  async (req: Request, res: Response) => {
+    const result = await propertyService.updatePropertyAvailability(
+      req.params.id as string,
+      req.body.status,
+      req.user!.id,
+    );
+
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "Property availability updated successfully",
+      data: result,
+    });
+  },
+);
+
 const deleteProperty = catchAsync(async (req: Request, res: Response) => {
   const result = await propertyService.deleteProperty(
     req.params.id as string,
@@ -94,5 +106,6 @@ export const propertyController = {
   getMyProperties,
   getSingleProperty,
   updateProperty,
+  updatePropertyAvailability,
   deleteProperty,
 };

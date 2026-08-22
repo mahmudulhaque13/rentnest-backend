@@ -2,41 +2,23 @@ import { z } from "zod";
 
 const createPropertyValidation = z.object({
   body: z.object({
-    title: z.string().min(3, {
-      message: "Title must be at least 3 characters",
-    }),
+    title: z.string().min(3),
 
-    description: z.string().min(10, {
-      message: "Description must be at least 10 characters",
-    }),
+    description: z.string().min(10),
 
-    rent: z.number().positive({
-      message: "Rent must be greater than 0",
-    }),
+    rent: z.number().positive(),
 
-    bedrooms: z.number().int().min(1, {
-      message: "Bedrooms must be at least 1",
-    }),
+    bedrooms: z.number().int().min(1),
 
-    bathrooms: z.number().int().min(1, {
-      message: "Bathrooms must be at least 1",
-    }),
+    bathrooms: z.number().int().min(1),
 
-    address: z.string().min(3, {
-      message: "Address is required",
-    }),
+    address: z.string(),
 
-    city: z.string().min(2, {
-      message: "City is required",
-    }),
+    city: z.string(),
 
-    district: z.string().min(2, {
-      message: "District is required",
-    }),
+    district: z.string(),
 
-    images: z.array(z.url()).min(1, {
-      message: "At least one image is required",
-    }),
+    images: z.array(z.url()),
 
     amenities: z.array(z.string()).optional(),
 
@@ -72,7 +54,14 @@ const updatePropertyValidation = z.object({
   }),
 });
 
+const updatePropertyAvailabilityValidation = z.object({
+  body: z.object({
+    status: z.enum(["AVAILABLE", "UNAVAILABLE"]),
+  }),
+});
+
 export const propertyValidation = {
   createPropertyValidation,
   updatePropertyValidation,
+  updatePropertyAvailabilityValidation,
 };

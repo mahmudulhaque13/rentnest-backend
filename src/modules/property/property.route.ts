@@ -1,9 +1,10 @@
 import { Router } from "express";
+import { Role } from "@prisma/client";
 
 import auth from "../../middlewares/auth";
-import { propertyController } from "./property.controller";
-import { Role } from "@prisma/client";
 import validateRequest from "../../middlewares/validateRequest";
+
+import { propertyController } from "./property.controller";
 import { propertyValidation } from "./property.validation";
 
 const router = Router();
@@ -24,6 +25,13 @@ router.get(
 );
 
 router.get("/:id", propertyController.getSingleProperty);
+
+router.patch(
+  "/:id/availability",
+  auth(Role.LANDLORD),
+  validateRequest(propertyValidation.updatePropertyAvailabilityValidation),
+  propertyController.updatePropertyAvailability,
+);
 
 router.patch(
   "/:id",
