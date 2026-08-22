@@ -224,8 +224,8 @@ const updatePropertyAvailability = async (
     );
   }
 
-  // A property that is already rented cannot be manually
-  // changed through the availability toggle.
+  // A rented property cannot be manually changed
+  // through the availability toggle.
   if (property.status === "RENTED") {
     throw new AppError(
       httpStatus.BAD_REQUEST,
@@ -238,7 +238,7 @@ const updatePropertyAvailability = async (
       id,
     },
     data: {
-      status: status === "AVAILABLE" ? "AVAILABLE" : "RENTED",
+      status,
     },
   });
 
