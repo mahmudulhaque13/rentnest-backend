@@ -201,6 +201,50 @@ const updateProperty = async (id: string, payload: any, landlordId: string) => {
   return updatedProperty;
 };
 
+const updatePropertyAvailability = async (
+  id: string,
+  status: "AVAILABLE" | "UNAVAILABLE",
+  landlordId: string,
+) => {
+  const property = await prisma.property.findFirst({
+    where: {
+      id,
+      isDeleted: false,
+    },
+  });
+
+  if (!property) {
+    throw new AppError(httpStatus.NOT_FOUND, "Property not found");
+  }
+
+  if (property.landlordId !== landlordId) {
+    throw new AppError(
+      httpStatus.FORBIDDEN,
+      "You are not authorized to update this property",
+    );
+  }
+
+  // A property that is already rented cannot be manually
+  // changed through the availability toggle.
+  if (property.status === "RENTED") {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      "Rented property availability cannot be changed",
+    );
+  }
+
+  const updatedProperty = await prisma.property.update({
+    where: {
+      id,
+    },
+    data: {
+      status: status === "AVAILABLE" ? "AVAILABLE" : "RENTED",
+    },
+  });
+
+  return updatedProperty;
+};
+
 const deleteProperty = async (id: string, landlordId: string) => {
   const property = await prisma.property.findFirst({
     where: {
@@ -238,5 +282,6 @@ export const propertyService = {
   getMyProperties,
   getSingleProperty,
   updateProperty,
+  updatePropertyAvailability,
   deleteProperty,
 };

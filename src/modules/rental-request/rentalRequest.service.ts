@@ -173,33 +173,27 @@ const approveRentalRequest = async (requestId: string, landlordId: string) => {
     );
   }
 
+  if (request.status !== "PENDING") {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      "Only pending requests can be approved",
+    );
+  }
+
   if (request.property.status !== "AVAILABLE") {
     throw new AppError(httpStatus.BAD_REQUEST, "Property is not available");
   }
 
-  const result = await prisma.$transaction(async (tx) => {
-    const updatedRequest = await tx.rentalRequest.update({
-      where: {
-        id: requestId,
-      },
-      data: {
-        status: "APPROVED",
-      },
-    });
-
-    await tx.property.update({
-      where: {
-        id: request.propertyId,
-      },
-      data: {
-        status: "RENTED",
-      },
-    });
-
-    return updatedRequest;
+  const updatedRequest = await prisma.rentalRequest.update({
+    where: {
+      id: requestId,
+    },
+    data: {
+      status: "APPROVED",
+    },
   });
 
-  return result;
+  return updatedRequest;
 };
 
 const rejectRentalRequest = async (requestId: string, landlordId: string) => {

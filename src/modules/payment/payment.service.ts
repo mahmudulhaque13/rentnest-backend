@@ -48,6 +48,11 @@ const createCheckoutSession = async (
     );
   }
 
+  // Property Availability Check
+  if (rentalRequest.property.status !== PropertyStatus.AVAILABLE) {
+    throw new AppError(httpStatus.BAD_REQUEST, "Property is not available");
+  }
+
   // Existing Payment Check
   const existingPayment = await prisma.payment.findUnique({
     where: {
@@ -153,6 +158,7 @@ const stripeWebhook = async (req: Request) => {
   }
 
   await prisma.$transaction(async (tx) => {
+    // Mark Payment as PAID
     await tx.payment.update({
       where: {
         rentalRequestId,
@@ -164,6 +170,17 @@ const stripeWebhook = async (req: Request) => {
       },
     });
 
+    // Rental Request becomes ACTIVE after successful payment
+    await tx.rentalRequest.update({
+      where: {
+        id: rentalRequestId,
+      },
+      data: {
+        status: RentalStatus.ACTIVE,
+      },
+    });
+
+    // Property becomes RENTED after successful payment
     await tx.property.update({
       where: {
         id: propertyId,
